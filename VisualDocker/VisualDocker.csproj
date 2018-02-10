@@ -76,6 +76,7 @@
       <DependentUpon>GeneralSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\NotifyPropertyChangedObject.cs" />
+    <Compile Include="Infrastructure\RelayCommand.cs" />
     <Compile Include="Models\DockerImageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualDockerPackage.cs" />

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:app="clr-namespace:VisualDocker.Converters"
              mc:Ignorable="d" 
+             x:Name="ParentControl"
              d:DesignHeight="40" d:DesignWidth="300">
 
     <UserControl.Resources>
@@ -20,18 +21,38 @@
     
     <Grid>
         <Border Background="#acfac0" 
-                BorderThickness="4" 
+                BorderThickness="3" 
                 BorderBrush="Green"
                 Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <TextBlock Text="Connected" 
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Connected" 
                        VerticalAlignment="Center"
                        Foreground="Black"
                        FontWeight="Bold"
                        Margin="4 0"
                        />
+
+                <Button Grid.Column="1"
+                        Click="Button_Click"
+                        Margin="4 0"
+                        Height="20" Width="20">
+                    <TextBlock Text="X" 
+                               FontWeight="Bold"
+                               />
+                </Button>
+
+            </Grid>
+            
         </Border>
         <Border Background="#fc9da0" 
-                BorderThickness="4" 
+                BorderThickness="3" 
                 BorderBrush="Red"
                 Visibility="{Binding IsConnected, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <Grid>
@@ -58,6 +79,7 @@
                       />
 
                 <Button Content="Retry" 
+                        Command="{Binding RetryCommand}"
                         Width="40"
                         Grid.Column="3"
                         Margin="4"
