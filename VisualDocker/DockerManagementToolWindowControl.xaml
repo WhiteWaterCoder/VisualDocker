@@ -5,16 +5,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:images="clr-namespace:VisualDocker.Controls.Images"
+             xmlns:status="clr-namespace:VisualDocker.Controls.Status"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
     <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
         <TabControl>
             <TabItem Header="Images">
                 <images:ImagesView />
             </TabItem>
         </TabControl>
+
+        <status:StatusView Grid.Row="1" />
+
     </Grid>
 </UserControl>

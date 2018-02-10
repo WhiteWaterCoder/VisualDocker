@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="VisualDocker.Controls.Status.StatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:app="clr-namespace:VisualDocker.Converters"
+             mc:Ignorable="d" 
+             x:Name="ParentControl"
+             d:DesignHeight="40" d:DesignWidth="300">
+
+    <UserControl.Resources>
+        <app:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" 
+                                          True="Visible" 
+                                          False="Collapsed" 
+                                          />
+        <app:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" 
+                                          True="Collapsed" 
+                                          False="Visible" 
+                                          />
+    </UserControl.Resources>
+    
+    <Grid>
+        <Border Background="#acfac0" 
+                BorderThickness="3" 
+                BorderBrush="Green"
+                Visibility="{Binding IsConnected, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Connected" 
+                       VerticalAlignment="Center"
+                       Foreground="Black"
+                       FontWeight="Bold"
+                       Margin="4 0"
+                       />
+
+                <Button Grid.Column="1"
+                        Click="Button_Click"
+                        Margin="4 0"
+                        Height="20" Width="20">
+                    <TextBlock Text="X" 
+                               FontWeight="Bold"
+                               />
+                </Button>
+
+            </Grid>
+            
+        </Border>
+        <Border Background="#fc9da0" 
+                BorderThickness="3" 
+                BorderBrush="Red"
+                Visibility="{Binding IsConnected, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Error Connecting" 
+                           Foreground="Black"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Margin="4 0"
+                           />
+
+                <Path Width="20" Height="20" 
+                      Grid.Column="1"
+                      ToolTip="{Binding Error}"
+                      Stretch="Fill" 
+                      Fill="#bd080e" 
+                      Data="F1 M 58.5832,55.4172L 17.4169,55.4171C 15.5619,53.5621 15.5619,50.5546 17.4168,48.6996L 35.201,15.8402C 37.056,13.9852 40.0635,13.9852 41.9185,15.8402L 58.5832,48.6997C 60.4382,50.5546 60.4382,53.5622 58.5832,55.4172 Z M 34.0417,25.7292L 36.0208,41.9584L 39.9791,41.9583L 41.9583,25.7292L 34.0417,25.7292 Z M 38,44.3333C 36.2511,44.3333 34.8333,45.7511 34.8333,47.5C 34.8333,49.2489 36.2511,50.6667 38,50.6667C 39.7489,50.6667 41.1666,49.2489 41.1666,47.5C 41.1666,45.7511 39.7489,44.3333 38,44.3333 Z "
+                      />
+
+                <Button Content="Retry" 
+                        Command="{Binding RetryCommand}"
+                        Width="40"
+                        Grid.Column="3"
+                        Margin="4"
+                        />
+            </Grid>
+            
+        </Border>
+    </Grid>
+</UserControl>
