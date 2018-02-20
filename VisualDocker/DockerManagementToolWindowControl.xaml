@@ -6,6 +6,7 @@
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:images="clr-namespace:VisualDocker.Controls.Images"
              xmlns:status="clr-namespace:VisualDocker.Controls.Status"
+             xmlns:containers="clr-namespace:VisualDocker.Controls.Containers"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
@@ -19,6 +20,9 @@
         </Grid.RowDefinitions>
         
         <TabControl>
+            <TabItem Header="Containers">
+                <containers:ContainersView />
+            </TabItem>
             <TabItem Header="Images">
                 <images:ImagesView />
             </TabItem>

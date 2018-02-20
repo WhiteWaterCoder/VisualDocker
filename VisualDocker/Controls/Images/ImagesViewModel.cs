@@ -1,6 +1,10 @@
 ﻿using DockerCliWrapper.Docker.Images;
+using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
+using VisualDocker.Controls.Common.CommonFilters;
 using VisualDocker.Infrastructure;
 using VisualDocker.Models;
 
@@ -11,7 +15,7 @@ namespace VisualDocker.Controls.Images
         private readonly DockerImages _dockerImages;
 
         private ObservableCollection<DockerImageModel> _images;
-        private bool _areResultsTruncated;
+        private CommonFiltersViewModel _commonFiltersViewModel;
 
         public ObservableCollection<DockerImageModel> Images
         {
@@ -19,46 +23,45 @@ namespace VisualDocker.Controls.Images
             set { Set(ref _images, value); }
         }
 
-        public bool AreResultsTruncated
+        public CommonFiltersViewModel CommonFiltersViewModel
         {
-            get { return _areResultsTruncated; }
-            set
-            {
-                if (Set(ref _areResultsTruncated, value))
-                {
-                    _dockerImages.DoNotTruncate(!_areResultsTruncated);
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    ExecuteSearch(true);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                }
-            }
+            get { return _commonFiltersViewModel; }
+            set { Set(ref _commonFiltersViewModel, value); }
         }
 
         public ImagesViewModel()
         {
             _dockerImages = new DockerImages();
-            
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            ExecuteSearch(true);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            CommonFiltersViewModel = new CommonFiltersViewModel();
+            CommonFiltersViewModel.PropertyChanged += CommonFiltersViewModel_PropertyChanged;
+
+            FireAndForgetSearch();
         }
 
-        private async Task ExecuteSearch(bool clearResults)
+        private void CommonFiltersViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (clearResults)
+            if (e.PropertyName == nameof(CommonFiltersViewModel.ShowAll))
             {
-                Images = new ObservableCollection<DockerImageModel>();
+                _dockerImages.ShowAll(CommonFiltersViewModel.ShowAll);
+            }
+            else if (e.PropertyName == nameof(CommonFiltersViewModel.DoNotTruncateResults))
+            {
+                _dockerImages.DoNotTruncate(CommonFiltersViewModel.DoNotTruncateResults);
             }
 
-            var result = await _dockerImages.Execute();
-            
-            foreach (var i in result)
-            {
-                var image = new DockerImageModel(i.ImageId, i.Repository, i.Tag, i.Digest, i.CreatedSince, i.CreatedAt, i.Size);
+            FireAndForgetSearch();
+        }
 
-                Images.Add(image);
-            }
+        private void FireAndForgetSearch()
+        {
+            Task.Factory.StartNew(async () => 
+            {
+                var result = await _dockerImages.SearchAsync();
+
+                Images = new ObservableCollection<DockerImageModel>(
+                    result.Select(i => new DockerImageModel(i.Id, i.Repository, i.Tag, i.Digest, i.CreatedSince, i.CreatedAt, i.Size)));
+            });
         }
     }
 }
