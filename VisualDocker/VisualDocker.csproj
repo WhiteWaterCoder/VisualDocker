@@ -54,6 +54,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Controls\Common\CommonFilters\CommonFiltersView.xaml.cs">
+      <DependentUpon>CommonFiltersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Common\CommonFilters\CommonFiltersViewModel.cs" />
+    <Compile Include="Controls\Containers\ContainersView.xaml.cs">
+      <DependentUpon>ContainersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Containers\ContainersViewModel.cs" />
     <Compile Include="Controls\Images\ImagesView.xaml.cs">
       <DependentUpon>ImagesView.xaml</DependentUpon>
     </Compile>
@@ -77,6 +85,7 @@
     </Compile>
     <Compile Include="Infrastructure\NotifyPropertyChangedObject.cs" />
     <Compile Include="Infrastructure\RelayCommand.cs" />
+    <Compile Include="Models\DockerContainerModel.cs" />
     <Compile Include="Models\DockerImageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualDockerPackage.cs" />
@@ -110,8 +119,8 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DockerCliWrapper, Version=0.0.6.0, Culture=neutral, PublicKeyToken=b6e15c1e4883669b, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockerCliWrapper.0.0.6\lib\netstandard2.0\DockerCliWrapper.dll</HintPath>
+    <Reference Include="DockerCliWrapper, Version=0.0.7.0, Culture=neutral, PublicKeyToken=b6e15c1e4883669b, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockerCliWrapper.0.0.7\lib\netstandard2.0\DockerCliWrapper.dll</HintPath>
     </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -218,6 +227,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\Common\CommonFilters\CommonFiltersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Containers\ContainersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Images\ImagesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

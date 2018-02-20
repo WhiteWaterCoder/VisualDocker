@@ -17,7 +17,6 @@ namespace VisualDocker.Models
         {
             get { return _imageId; }
             private set { Set(ref _imageId, value); }
-
         }
 
         public string Repository
@@ -65,6 +64,11 @@ namespace VisualDocker.Models
             CreatedSince = createdSince;
             CreatedAt = createdAt;
             Size = size;
+        }
+
+        public override string ToString()
+        {
+            return Repository;
         }
     }
 }

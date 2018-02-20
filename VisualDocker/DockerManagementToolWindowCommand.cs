@@ -49,8 +49,6 @@ namespace VisualDocker
                 menuItem.Checked = GeneralSettings.Default.EnableVisualDocker;
                 commandService.AddCommand(menuItem);
             }
-
-            var meh = new DockerCliWrapper.Docker.Images.DockerImages().Execute();
         }
 
         /// <summary>
