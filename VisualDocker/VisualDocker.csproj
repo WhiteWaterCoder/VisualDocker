@@ -119,8 +119,8 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="DockerCliWrapper, Version=0.0.7.0, Culture=neutral, PublicKeyToken=b6e15c1e4883669b, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockerCliWrapper.0.0.7\lib\netstandard2.0\DockerCliWrapper.dll</HintPath>
+    <Reference Include="DockerCliWrapper, Version=0.0.8.0, Culture=neutral, PublicKeyToken=b6e15c1e4883669b, processorArchitecture=MSIL">
+      <HintPath>..\packages\DockerCliWrapper.0.0.8\lib\netstandard2.0\DockerCliWrapper.dll</HintPath>
     </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
