@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using VisualDocker.Controls.Common.CommonFilters;
 using VisualDocker.Infrastructure;
 using VisualDocker.Models;
@@ -14,7 +15,7 @@ namespace VisualDocker.Controls.Containers
 
         private ObservableCollection<DockerContainerModel> _containers;
         private CommonFiltersViewModel _commonFiltersViewModel;
-
+        
         public ObservableCollection<DockerContainerModel> Containers
         {
             get { return _containers; }
@@ -26,14 +27,14 @@ namespace VisualDocker.Controls.Containers
             get { return _commonFiltersViewModel; }
             set { Set(ref _commonFiltersViewModel, value); }
         }
-
+        
         public ContainersViewModel()
         {
             _dockerContainers = new DockerContainers();
 
             CommonFiltersViewModel = new CommonFiltersViewModel();
             CommonFiltersViewModel.PropertyChanged += CommonFiltersViewModel_PropertyChanged;
-
+            
             FireAndForgetSearch(true);
         }
 
@@ -53,22 +54,25 @@ namespace VisualDocker.Controls.Containers
 
         private void FireAndForgetSearch(bool clearResults)
         {
-            Task.Factory.StartNew(async () =>
-            {
-                if (clearResults)
+            Task.Factory
+                .StartNew(() =>
                 {
-                    Containers = new ObservableCollection<DockerContainerModel>();
-                }
+                    if (clearResults)
+                    {
+                        Containers = new ObservableCollection<DockerContainerModel>();
+                    }
 
-                var result = await _dockerContainers.SearchAsync();
-
-                foreach (var c in result)
+                    return _dockerContainers.SearchAsync().GetAwaiter().GetResult();
+                })
+                .ContinueWith(r => 
                 {
-                    var container = new DockerContainerModel(c.Id, c.Image, c.Command, c.Created, c.Status, c.Ports, c.Names, c.Size);
+                    foreach (var c in r.Result)
+                    {
+                        var container = new DockerContainerModel(c.Id, c.Image, c.Command, c.Created, c.Status, c.Ports, c.Names, c.Size);
 
-                    Containers.Add(container);
-                }
-            });
+                        Containers.Add(container);
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }
