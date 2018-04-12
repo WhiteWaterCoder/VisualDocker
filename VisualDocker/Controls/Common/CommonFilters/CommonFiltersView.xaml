@@ -27,13 +27,6 @@
                       Grid.Column="1" Grid.Row="0"
                       />
 
-        <TextBlock Text="Do not truncate results:" 
-                       Grid.Column="3" Grid.Row="0"
-                       />
-        <CheckBox IsChecked="{Binding DoNotTruncateResults}"
-                      Grid.Column="4" Grid.Row="0"
-                      />
-
     </Grid>
     
 </UserControl>

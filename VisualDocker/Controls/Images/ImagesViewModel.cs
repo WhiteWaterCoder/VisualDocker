@@ -45,10 +45,6 @@ namespace VisualDocker.Controls.Images
             {
                 _dockerImages.ShowAll(CommonFiltersViewModel.ShowAll);
             }
-            else if (e.PropertyName == nameof(CommonFiltersViewModel.DoNotTruncateResults))
-            {
-                _dockerImages.DoNotTruncate(CommonFiltersViewModel.DoNotTruncateResults);
-            }
 
             FireAndForgetSearch();
         }
