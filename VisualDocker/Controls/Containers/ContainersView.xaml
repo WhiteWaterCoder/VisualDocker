@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:commonfilters="clr-namespace:VisualDocker.Controls.Common.CommonFilters"
+             xmlns:cliWrapper="clr-namespace:DockerCliWrapper.Docker.Container;assembly=DockerCliWrapper"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -31,9 +32,21 @@
 
         <commonfilters:CommonFiltersView DataContext="{Binding CommonFiltersViewModel}" />
 
-        <DataGrid ItemsSource="{Binding Containers}" 
+        <DataGrid ItemsSource="{Binding ContainersView}" 
                   AutoGenerateColumns="False"
                   Grid.Row="2">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static cliWrapper:ContainerEventStatus.Start}">
+                            <Setter Property="Background" Value="Green"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static cliWrapper:ContainerEventStatus.Stop}">
+                            <Setter Property="Background" Value="Red"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="90" />
                 <DataGridTextColumn Header="Image" Binding="{Binding Image}" Width="*" />

@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using DockerCliWrapper.Docker.Events;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+using VisualDocker.Services;
 
 namespace VisualDocker
 {
@@ -44,6 +46,8 @@ namespace VisualDocker
         /// </summary>
         public const string PackageGuidString = "b02cdbbd-a4bb-4d7e-b32c-9365ebd2d8f9";
 
+        ManualAssemblyResolver _assemblyResolver;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VisualDockerPackage"/> class.
         /// </summary>
@@ -53,6 +57,8 @@ namespace VisualDocker
             // any Visual Studio service because at this point the package object is created but
             // not sited yet inside Visual Studio environment. The place to do all the other
             // initialization is the Initialize method.
+
+            _assemblyResolver = new ManualAssemblyResolver(typeof(EventsStreamer).Assembly);
         }
 
         #region Package Members

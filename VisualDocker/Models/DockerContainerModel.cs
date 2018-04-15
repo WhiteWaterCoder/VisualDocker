@@ -3,25 +3,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VisualDocker.Extensions;
 using VisualDocker.Infrastructure;
 
 namespace VisualDocker.Models
 {
     public class DockerContainerModel : NotifyPropertyChangedObject
     {
+        public static DockerContainerModel Empty { get; } = new DockerContainerModel();
+
         private readonly DockerContainer _container;
 
         private string _id;
         private string _image;
         private string _command;
         private string _created;
-        private string _status;
+        private ContainerEventStatus _status;
         private string _ports;
         private string _names;
         private string _size;
         private bool _isRunning;
         private bool _isPaused;
-        private bool _awaitingStatusUpdate;
 
         private ICommand _startCommand;
         private ICommand _stopCommand;
@@ -53,17 +55,15 @@ namespace VisualDocker.Models
             private set { Set(ref _created, value); }
         }
 
-        public string Status
+        public ContainerEventStatus Status
         {
             get { return _status; }
-            private set
+            set
             {
                 if (Set(ref _status, value))
                 {
-                    _awaitingStatusUpdate = false;
-
-                    IsRunning = Status.StartsWith("Up");
-                    IsPaused = Status.Contains("Paused");
+                    IsRunning = Status == ContainerEventStatus.Start;
+                    IsPaused = Status == ContainerEventStatus.Pause;
                 }
             }
         }
@@ -128,6 +128,10 @@ namespace VisualDocker.Models
             set { Set(ref _killCommand, value); }
         }
 
+        private DockerContainerModel()
+        {
+        }
+
         public DockerContainerModel(string id, string image, string command, string created, string status, string ports, string names, string size)
         {
             _container = new DockerContainer(id);
@@ -136,48 +140,35 @@ namespace VisualDocker.Models
             Image = image;
             Command = command;
             Created = created;
-            Status = status;
             Ports = ports;
             Names = names;
             Size = size;
 
-            StartCommand = new RelayCommand(_ => !IsRunning, _ => { _container.Start(); UpdateStatus(); });
-            StopCommand = new RelayCommand(_ => IsRunning, _ => { _container.Stop(); UpdateStatus(); });
-            RestartCommand = new RelayCommand(_ => true, _ => { _container.Restart(); UpdateStatus(); });
-            PauseCommand = new RelayCommand(_ => !IsPaused, _ => { _container.Pause(); UpdateStatus(); });
-            KillCommand = new RelayCommand(_ => IsRunning, _ => { _container.Kill(); UpdateStatus(); });
+            if (status.StartsWith("Up"))
+            {
+                Status = status.ContainsLoose("paused") 
+                            ? ContainerEventStatus.Pause 
+                            : ContainerEventStatus.Start;
+            }
+            else if (status.ContainsLoose("Restarting"))
+            {
+                Status = ContainerEventStatus.Restart;
+            }
+            else if (status.ContainsLoose("Created") || status.ContainsLoose("Exited"))
+            {
+                Status = ContainerEventStatus.Stop;
+            }
+
+            StartCommand = new RelayCommand(_ => !IsRunning, _ => { _container.Start(); });
+            StopCommand = new RelayCommand(_ => IsRunning, _ => { _container.Stop(); });
+            RestartCommand = new RelayCommand(_ => true, _ => { _container.Restart(); });
+            PauseCommand = new RelayCommand(_ => !IsPaused, _ => { _container.Pause(); });
+            KillCommand = new RelayCommand(_ => IsRunning, _ => { _container.Kill(); });
         }
 
         public override string ToString()
         {
             return Image;
-        }
-
-        private void UpdateStatus()
-        {
-            _awaitingStatusUpdate = true;
-
-            Task.Factory.StartNew(() =>
-            {
-                var containers = new DockerContainers();
-                containers.ShowAll(true);
-
-                while (_awaitingStatusUpdate)
-                {
-                    var match = containers.SearchAsync()
-                                          .GetAwaiter()
-                                          .GetResult()
-                                          .FirstOrDefault(r => { return string.Equals(r.Id, Id); });
-
-                    if (match != null)
-                    {
-                        Ports = match.Ports;
-                        Status = match.Status;
-                    }
-
-                    Thread.Sleep(1000);
-                }
-            });
         }
     }
 }
